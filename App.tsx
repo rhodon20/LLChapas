@@ -6,6 +6,7 @@ import Pitch from './components/Pitch';
 import { ScoreBoard, ActionMenu, FeedbackOverlay } from './components/GameUI';
 import PlayerCard from './components/PlayerCard';
 import LeagueTable from './components/LeagueTable';
+import HelpModal from './components/HelpModal';
 import { calculateSuccessChance, resolveAction } from './engine/core';
 import { randomInt, getDistance } from './utils/math';
 
@@ -14,6 +15,7 @@ const App: React.FC = () => {
   const [phase, setPhase] = useState<GamePhase>('MENU');
   const [userTeam, setUserTeam] = useState<Team | null>(null);
   const [cpuTeam, setCpuTeam] = useState<Team | null>(null);
+  const [showHelp, setShowHelp] = useState<boolean>(false);
   
   // --- League State ---
   const [leagueStandings, setLeagueStandings] = useState<LeagueRow[]>([]);
@@ -606,19 +608,26 @@ const App: React.FC = () => {
   // --- RENDER ---
   return (
     <div className="w-full h-full min-h-screen bg-gray-900 select-none overflow-hidden">
+      {showHelp && <HelpModal onClose={() => setShowHelp(false)} />}
+      
       {phase === 'MENU' && (
         <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-br from-gray-900 to-black text-white p-4">
           <h1 className="text-6xl font-black font-sport text-yellow-500 mb-2 tracking-tighter">LIGA RPG CHAPAS</h1>
           <button onClick={() => {
               setCareerTeam(null); // Clear previous career session if any
               setPhase('TEAM_SELECT');
-          }} className="bg-white text-black font-bold py-4 px-8 rounded-xl mb-4">PARTIDO RÁPIDO</button>
+          }} className="bg-white text-black font-bold py-4 px-8 rounded-xl mb-4 shadow-lg hover:scale-105 transition-transform">PARTIDO RÁPIDO</button>
+          
           <button onClick={() => {
               const myTeam = createTeam('Mi Club', 'MIA', '#00ff00', '#000000', 65);
               setCareerTeam(myTeam);
               initLeague(myTeam);
               setPhase('CAREER_HUB');
-          }} className="bg-gray-800 border font-bold py-4 px-8 rounded-xl">MODO CARRERA</button>
+          }} className="bg-gray-800 border-2 border-gray-600 hover:border-white font-bold py-4 px-8 rounded-xl shadow-lg hover:scale-105 transition-transform">MODO CARRERA</button>
+
+          <button onClick={() => setShowHelp(true)} className="mt-8 text-gray-400 underline hover:text-white transition">
+             CÓMO JUGAR
+          </button>
         </div>
       )}
 
